@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include your CSS file here -->
+    <link rel="stylesheet" href="new_style.css">
+</head>
+<body>
+    <div class="grid-container">
+        <h1>Budget Planner</h1>
+    
+        <!-- Income and Goal Setting -->
+        <section class="income-goal">
+            <div class="form-group">
+                <label for="income">Monthly Income:</label>
+                <input type="number" class="form-control" id="income" placeholder="Enter your income">
+            </div>
+            <div class="form-group">
+                <h3>Goal Setting</h3>
+                <label for="goalName">Goal Name:</label>
+                <input type="text" class="form-control" id="goalName" placeholder="e.g., Save for a Laptop">
+                <label for="goalAmount">Target Amount:</label>
+                <input type="number" class="form-control" id="goalAmount" placeholder="Enter target amount">
+                <label for="goalDate">Achieve By:</label>
+                <input type="date" class="form-control" id="goalDate">
+            </div>
+        </section>
+    
+        <!-- Expenses -->
+        <section class="essential-expenses-section">
+            <div class="essential-expenses">
+                <h3>Essential Expenses</h3>
+                <div class="form-group">
+                    <label for="rent">Rent:</label>
+                    <input type="number" class="form-control" id="rent" placeholder="Enter monthly rent">
+                </div>
+                <div class="form-group">
+                    <label for="utilities">Utilities:</label>
+                    <input type="number" class="form-control" id="utilities" placeholder="Enter monthly utilities">
+                </div>
+                <div class="form-group">
+                    <label for="food">Food:</label>
+                    <input type="number" class="form-control" id="food" placeholder="Enter monthly food expense">
+                </div>
+                <div class="form-group">
+                    <label for="transport">Transportation:</label>
+                    <input type="number" class="form-control" id="transport" placeholder="Enter monthly transportation cost">
+                </div>
+                <div class="form-group">
+                    <label for="insurance">Insurance:</label>
+                    <input type="number" class="form-control" id="insurance" placeholder="Enter monthly insurance premium">
+                </div>
+            </div>
+        </section>
+
+        <section class="discretionary-expenses-section">
+            
+            <div class="discretionary-expenses">
+                <h3>Discretionary Expenses</h3>
+                <div class="form-group">
+                    <label for="entertainment">Entertainment:</label>
+                    <input type="number" class="form-control" id="entertainment" placeholder="Enter monthly entertainment budget">
+                </div>
+                <div class="form-group">
+                    <label for="dining">Dining Out:</label>
+                    <input type="number" class="form-control" id="dining" placeholder="Enter monthly dining out expense">
+                </div>
+                <div class="form-group">
+                    <label for="clothing">Clothing:</label>
+                    <input type="number" class="form-control" id="clothing" placeholder="Enter monthly clothing budget">
+                </div>
+                <div class="form-group">
+                    <label for="hobbies">Hobbies:</label>
+                    <input type="number" class="form-control" id="hobbies" placeholder="Enter monthly hobbies expense">
+                </div>
+            </div>
+            
+        </section>
+
+        <section class="dashboard-section">
+            <h2>Financial Dashboard</h2>
+            
+                <!-- 1. Current Savings -->
+                <div class="dashboard-item">
+                    <h3>Current Savings</h3>
+                    <p id="currentSavings">$0</p>
+                </div>
+            
+                <!-- 2. Monthly Income -->
+                <div class="dashboard-item">
+                    <h3>Monthly Income</h3>
+                    <p id="monthlyIncome">$0</p>
+                </div>
+            
+                <!-- 3. Monthly Expenses -->
+                <div class="dashboard-item">
+                    <h3>Monthly Expenses</h3>
+                    <p id="monthlyExpenses">$0</p>
+                </div>
+            
+                <!-- 4. Net Cash Flow -->
+                <div class="dashboard-item">
+                    <h3>Net Cash Flow</h3>
+                    <p id="netCashFlow">$0</p>
+                </div>
+            
+                <!-- 5. Savings Goal -->
+                <div class="dashboard-item">
+                    <h3>Savings Goal</h3>
+                    <p id="savingsGoal">$0</p>
+                </div>
+            
+                <!-- 6. Time to Reach Savings Goal -->
+                <div class="dashboard-item">
+                    <h3>Time to Reach Savings Goal</h3>
+                    <p id="timeToGoal">0 months</p>
+                </div>
+            
+                <!-- 7. Monthly Savings Requirement -->
+                <div class="dashboard-item">
+                    <h3>Monthly Savings Requirement</h3>
+                    <p id="monthlySavingsRequirement">$0</p>
+                </div>
+            
+            
+        </section>
+    
+        <!-- Budget Summary -->
+        <section class="budget-summary">
+            <h2>Budget Summary</h2>
+            <div id="summary">
+                <!-- Calculation results displayed here -->
+            </div>
+            <canvas id="budgetChart"></canvas>
+        </section>
+    
+        <!-- Goal Dashboard -->
+        
+        <!-- Investment Projections -->
+        <section class="investment-projections">
+            <h3>Investment Projections</h3>
+            <div class="form-group">
+                <label for="investmentType">Investment Type:</label>
+                <select class="form-control" id="investmentType">
+                    <option value="none">No Investment</option>
+                    <option value="savings">Savings Account</option>
+                    <option value="bonds">Government Bonds</option>
+                    <option value="stocks">Stocks</option>
+                    <option value="crypto">Cryptocurrency</option>
+                    <option value="realEstate">Real Estate</option>
+                </select>
+            </div>
+            <p id="investmentProjection">Projected Investment Value after 1 Year: $0</p>
+            <canvas id="investmentChart"></canvas>
+        </section>
+    
+        <!-- Additional elements as needed -->
+    </div>
+    
+    <script>
+        
+    function updateBudgetSummary() {
+        let monthlyIncome = parseFloat(document.getElementById('income').value) || 0;
+        let rent = parseFloat(document.getElementById('rent').value) || 0;
+        let utilities = parseFloat(document.getElementById('utilities').value) || 0;
+        let food = parseFloat(document.getElementById('food').value) || 0;
+        let transport = parseFloat(document.getElementById('transport').value) || 0;
+        let insurance = parseFloat(document.getElementById('insurance').value) || 0;
+        let entertainment = parseFloat(document.getElementById('entertainment').value) || 0;
+        let dining = parseFloat(document.getElementById('dining').value) || 0;
+        let clothing = parseFloat(document.getElementById('clothing').value) || 0;
+        let hobbies = parseFloat(document.getElementById('hobbies').value) || 0;
+
+        let totalExpenses = rent + utilities + food + transport + insurance + entertainment + dining + clothing + hobbies;
+        let netCashFlow = monthlyIncome - totalExpenses;
+
+        document.getElementById('monthlyExpenses').textContent = `$${totalExpenses.toFixed(2)}`;
+        document.getElementById('netCashFlow').textContent = `$${netCashFlow.toFixed(2)}`;
+    }
+
+    function updateDashboard() {
+        let currentSavings = parseFloat(document.getElementById('currentSavings').textContent.replace('$', '')) || 0;
+        let monthlyIncome = parseFloat(document.getElementById('income').value) || 0;
+
+        document.getElementById('currentSavings').textContent = `$${currentSavings.toFixed(2)}`;
+        document.getElementById('monthlyIncome').textContent = `$${monthlyIncome.toFixed(2)}`;
+    }
+
+    function calculateInvestment() {
+        var currentSavings = parseFloat(document.getElementById('currentSavings').textContent.replace('$', '')) || 0;
+        var investmentType = document.getElementById('investmentType').value;
+        var rateMap = {
+            'none': 0,
+            'savings': 0.01,
+            'bonds': 0.02,
+            'stocks': 0.07,
+            'crypto': 0.12,
+            'realEstate': 0.05
+        };
+        var rate = rateMap[investmentType];
+        var futureValue = currentSavings * (1 + rate);
+
+        document.getElementById('investmentProjectionResult').textContent = "Projected Investment Value after 1 Year: $" + futureValue.toFixed(2);
+        
+        // Ensure this listener is added
+        document.getElementById('investmentType').addEventListener('change', calculateInvestment);
+
+    
+    }  
+
+    function createBudgetChart() {
+        var ctx = document.getElementById('budgetChart').getContext('2d');
+        var budgetChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Rent', 'Utilities', 'Food', 'Transport', 'Insurance', 'Entertainment', 'Dining', 'Clothing', 'Hobbies'],
+                datasets: [{
+                    label: 'Expense Distribution',
+                    data: [/* Array of expense values */],
+                    backgroundColor: [/* Array of color strings */],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    }
+
+    function createInvestmentChart() {
+        var ctx = document.getElementById('investmentChart').getContext('2d');
+        var investmentChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [/* Array of labels for each data point */],
+                datasets: [{
+                    label: 'Investment Growth',
+                    data: [/* Array of investment values */],
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    
+    
+    
+    
+    </script>
+    <!-- Include your JavaScript here -->
+    
+</body>
+    
+    
+</html>
