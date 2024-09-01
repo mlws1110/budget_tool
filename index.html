@@ -3,27 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Planner</title>
+    <title>Budget Planner Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style44.css">
 </head>
 <body>
-<div class="container mt-4">
-    <h1>Budget Planner</h1>
+<div class="dashboard-wrapper">
+    <h1>Budget Planner Dashboard</h1>
     <div class="alert alert-danger" id="error-message" style="display: none;"></div>
     <div class="alert alert-success" id="success-message" style="display: none;">Calculations updated successfully!</div>
-    <div class="row">
-        <div class="col-12">
+    <div class="dashboard-container">
+        <div class="dashboard-item">
+            <h3>Income & Goals</h3>
             <div class="form-group">
                 <label for="income">Monthly Income:</label>
                 <input type="number" class="form-control" id="income" placeholder="Enter your income">
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <h3>Goal Setting</h3>
             <div class="form-group">
                 <label for="goalName">Goal Name:</label>
                 <input type="text" class="form-control" id="goalName" placeholder="e.g., Save for a Laptop">
@@ -37,9 +33,7 @@
                 <input type="date" class="form-control" id="goalDate">
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
+        <div class="dashboard-item">
             <h3>Essential Expenses</h3>
             <div class="form-group">
                 <label for="rent">Rent:</label>
@@ -62,7 +56,7 @@
                 <input type="number" class="form-control" id="insurance">
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="dashboard-item">
             <h3>Discretionary Expenses</h3>
             <div class="form-group">
                 <label for="entertainment">Entertainment:</label>
@@ -85,43 +79,19 @@
                 <input type="number" class="form-control" id="savings">
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <button type="button" class="btn btn-primary" onclick="calculateBudget()">Calculate</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <h2>Budget Summary</h2>
+        <div class="dashboard-item">
+            <h3>Budget Summary</h3>
             <div id="summary"></div>
-            <div class="row">
-                <div class="col-12">
-                    <canvas id="budgetChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="goal-dashboard">
-        <div class="dashboard-item">
-            <h3>Current Savings</h3>
-            <p id="currentSavings">$0</p>
+            <canvas id="budgetChart"></canvas>
         </div>
         <div class="dashboard-item">
-            <h3>Target Goal</h3>
-            <p id="targetGoal">$1000</p>
+            <h3>Goal Dashboard</h3>
+            <p>Current Savings: <span id="currentSavings">$0</span></p>
+            <p>Target Goal: <span id="targetGoal">$0</span></p>
+            <p>Goal Achievement: <span id="goalPercentage">0%</span></p>
+            <p>Estimated Time to Goal: <span id="estimatedTime">0 months</span></p>
         </div>
         <div class="dashboard-item">
-            <h3>Goal Achievement</h3>
-            <p id="goalPercentage">0%</p>
-        </div>
-        <div class="dashboard-item">
-            <h3>Estimated Time to Goal</h3>
-            <p id="estimatedTime">6 months</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
             <h3>Investment Projections</h3>
             <div class="form-group">
                 <label for="investmentType">Investment Type:</label>
@@ -134,6 +104,7 @@
                     <option value="realEstate">Real Estate</option>
                 </select>
             </div>
+            <p>Time to Goal with Investment: <span id="timeToGoalWithInvestment">0 months</span></p>
             <canvas id="investmentChart"></canvas>
         </div>
     </div>
@@ -180,6 +151,12 @@
         document.getElementById('currentSavings').innerText = `$${currentSavings}`;
         document.getElementById('targetGoal').innerText = `$${targetGoal}`;
         document.getElementById('goalPercentage').innerText = `${goalPercentage}%`;
+
+        var goalDate = new Date(document.getElementById('goalDate').value);
+        var currentDate = new Date();
+        var monthsUntilGoal = (goalDate.getFullYear() - currentDate.getFullYear()) * 12 + (goalDate.getMonth() - currentDate.getMonth());
+        var monthlySavingsNeeded = monthsUntilGoal > 0 ? (targetGoal / monthsUntilGoal).toFixed(2) : 'Invalid Date or Target Amount';
+        document.getElementById('estimatedTime').innerText = `${monthsUntilGoal} months`;
     }
 
     function calculateBudget() {
@@ -199,7 +176,7 @@
 
         var totalExpenses = rent + food + utilities + transport + insurance + entertainment + dining + clothing + hobbies + savings;
         var remaining = income - totalExpenses;
-        
+
         document.getElementById('summary').innerHTML = 'Total Expenses: $' + totalExpenses.toFixed(2) + '<br>Remaining Balance: $' + remaining.toFixed(2);
 
         var goalAmount = parseFloat(document.getElementById('goalAmount').value) || 0;
@@ -253,6 +230,7 @@
     function calculateInvestmentProjection() {
         var investmentType = document.getElementById('investmentType').value;
         var currentSavings = parseFloat(document.getElementById('savings').value) || 0;
+        var goalAmount = parseFloat(document.getElementById('goalAmount').value) || 0;
 
         var rateMap = {
             none: 0,
@@ -265,10 +243,15 @@
 
         var rate = rateMap[investmentType];
         var projection = [currentSavings];
-        for (var i = 1; i <= 10; i++) {
-            var yearlyGrowth = projection[i - 1] * rate;
-            projection.push(projection[i - 1] + yearlyGrowth);
+        var monthsToGoal = 0;
+
+        while (projection[monthsToGoal] < goalAmount && monthsToGoal < 600) { // Cap at 50 years
+            var monthlyGrowth = projection[monthsToGoal] * (rate / 12);
+            projection.push(projection[monthsToGoal] + monthlyGrowth + currentSavings);
+            monthsToGoal++;
         }
+
+        document.getElementById('timeToGoalWithInvestment').innerText = `${monthsToGoal} months`;
 
         var ctx = document.getElementById('investmentChart').getContext('2d');
         if (investmentChart) {
@@ -278,7 +261,7 @@
         investmentChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Array.from({length: 10}, (_, i) => `Year ${i + 1}`),
+                labels: Array.from({length: monthsToGoal}, (_, i) => `Month ${i + 1}`),
                 datasets: [{
                     label: 'Projected Growth',
                     data: projection,

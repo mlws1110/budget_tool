@@ -1,5 +1,8 @@
 /* style.css */
-body {
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
 }
@@ -13,10 +16,12 @@ body {
 
 h1 {
     margin-bottom: 20px;
+    text-align: center;
 }
 
 h3 {
-    margin-top: 20px;
+    margin-top: 0;
+    margin-bottom: 15px;
 }
 
 .goal-dashboard {
@@ -24,12 +29,52 @@ h3 {
 }
 
 .dashboard-item {
-    background: #f1f1f1;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 4px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .alert {
-    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.dashboard-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.collapsible {
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 18px;
+}
+
+.active, .collapsible:hover {
+    background-color: #ccc;
+}
+
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
+}
+
+canvas {
+    max-height: 200px;
 }
